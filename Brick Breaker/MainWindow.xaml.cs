@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace Brick_Breaker
         private List<Brick> bricks = new List<Brick>();
         private Paddle paddle;
         private long score;
+        private int level;
         private long highScore;
 
         public MainWindow()
@@ -48,20 +50,24 @@ namespace Brick_Breaker
             Canvas.SetTop(paddle.GetRectangle(), paddle.Y);
             Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
 
-            // brick init
-            bricks.Add(new Brick(75, 50, 80, 30));
-            bricks.Add(new Brick(150, 350, 80, 30));
-            bricks.Add(new Brick(550, 50, 80, 30));
-            bricks.Add(new Brick(350, 90, 80, 30));
-            bricks.Add(new Brick(650, 150, 80, 30));
-            bricks.Add(new Brick(500, 170, 10, 10));
-            bricks.Add(new Brick(470, 450, 80, 30));
-            foreach (Brick curBrick in bricks)
-            {
-                wpfCanvas.Children.Add(curBrick.GetRectangle());
-                Canvas.SetTop(curBrick.GetRectangle(), curBrick.Y);
-                Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);
-            }
+            //// brick init
+            //bricks.Add(new Brick(75, 50, 80, 30));
+            //bricks.Add(new Brick(150, 350, 80, 30));
+            //bricks.Add(new Brick(550, 50, 80, 30));
+            //bricks.Add(new Brick(350, 90, 80, 30));
+            //bricks.Add(new Brick(650, 150, 80, 30));
+            //bricks.Add(new Brick(500, 170, 10, 10));
+            //bricks.Add(new Brick(470, 450, 80, 30));
+            //foreach (Brick curBrick in bricks)
+            //{
+            //    wpfCanvas.Children.Add(curBrick.GetRectangle());
+            //    Canvas.SetTop(curBrick.GetRectangle(), curBrick.Y);
+            //    Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);
+            //}
+
+            // load level
+            level = 1;
+            LoadLevel(level);
 
             // animation timer
             gameTimer.Interval = new TimeSpan(16000);
@@ -71,6 +77,44 @@ namespace Brick_Breaker
             // score board
             score = 0;
             highScore = 0;
+        }
+
+        private void LoadLevel(int level)
+        {
+            // remove existing bricks if any
+            List<Brick> removeBricks = new List<Brick>();
+            removeBricks.AddRange(bricks);
+            foreach (Brick brick in removeBricks)
+            {
+                wpfCanvas.Children.Remove(brick.GetRectangle());
+                bricks.Remove(brick);
+            }
+            removeBricks.Clear();
+
+            // open file and get default width and height
+            string[] lines = File.ReadAllLines("../../level" + level + ".csv");
+            int width = Int32.Parse(lines[0].Split(',')[0]);
+            int height = Int32.Parse(lines[0].Split(',')[1]);
+
+            // create bricks
+            foreach (string line in lines.Skip(1))
+            {
+                string[] values = line.Split(',');
+                int x =  Int32.Parse(values[0]);
+                int y = Int32.Parse(values[1]);
+                string color = values[2];
+                string goody = values[3];
+
+                bricks.Add(new Brick(x, y, width, height));
+            }
+
+            // add bricks to canvas
+            foreach (Brick curBrick in bricks)
+            {
+                wpfCanvas.Children.Add(curBrick.GetRectangle());
+                Canvas.SetTop(curBrick.GetRectangle(), curBrick.Y);
+                Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);
+            }
         }
 
         private void gameTick(object sender, EventArgs e)
@@ -123,7 +167,6 @@ namespace Brick_Breaker
                     {
                         // hit paddle
                         ball.Dy *= -1;
-                        IncreaseScore();
                     }
                 }
                 else // not on top of paddle, maybe it is on the corners
@@ -136,23 +179,21 @@ namespace Brick_Breaker
                     if (topRightHit)
                     {
                         CornerBounce(ball, paddle.X + paddle.Width, paddle.Y);
-                        //IncreaseScore();
+                        PaddleHit(paddle);
                     }
                     if (topLeftHit)
                     {
                         CornerBounce(ball, paddle.X, paddle.Y);
-                        //IncreaseScore();
+                        PaddleHit(paddle);
                     }
                 }
 
                 // brick collision
+                List<Brick> removeBricks = new List<Brick>();
                 foreach (Brick brick in bricks)
                 {
                     Point ballCenter = ball.getCenter();
 
-                    //Console.WriteLine(ball.GetRadius());
-                    //Console.WriteLine(brick.Width);
-                    //Console.WriteLine(brick.X - ball.GetRadius() + " <= " + ballCenter.X + " <= " + (brick.X + brick.Width + ball.GetRadius()));
                     if (brick.X - ball.GetRadius() <= ballCenter.X && ballCenter.X <= brick.X + brick.Width + ball.GetRadius())
                     {
                         if (brick.Y - ball.GetRadius() <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height + ball.GetRadius())
@@ -163,54 +204,54 @@ namespace Brick_Breaker
                             if (brick.X <= ballCenter.X && ballCenter.X <= brick.X + brick.Width)
                             {
                                 ball.Dy *= -1;
-                                IncreaseScore();
+                                BrickHit(brick);
                             }
                             if (brick.Y <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height)
                             {
                                 ball.Dx *= -1;
-                                IncreaseScore();
+                                BrickHit(brick);
                             }
 
                             // corners
                             if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y) <= ball.GetRadius()) // top left
                             {
                                 CornerBounce(ball, brick.X, brick.Y);
-                                IncreaseScore();
+                                BrickHit(brick);
                             }
                             if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y) <= ball.GetRadius()) // top right
                             {
                                 CornerBounce(ball, brick.X + brick.Width, brick.Y);
-                                IncreaseScore();
+                                BrickHit(brick);
                             }
                             if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y + brick.Height) <= ball.GetRadius()) // bottom left
                             {
                                 CornerBounce(ball, brick.X, brick.Y + brick.Height);
-                                IncreaseScore();
+                                BrickHit(brick);
                             }
                             if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y + brick.Height) <= ball.GetRadius()) // bottom right
                             {
                                 CornerBounce(ball, brick.X + brick.Width, brick.Y + brick.Height);
-                                IncreaseScore();
+                                BrickHit(brick);
                             }
                         }
                     }
 
-                    //if (brick.X <= ballCenter.X && ballCenter.X <= brick.X + brick.Width) // ball in brick X range?
-                    //{
-                    //    if (brick.Y <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height) // ball in brick Y range?
-                    //    {
-
-                    //    }
-                    //} else
-                    //{
-                    //    // maybe 
-                    //}
+                    // add to remove list to be removed outside of enumeration
+                    if (brick.Remove) removeBricks.Add(brick);
                 }
 
-                // Game Over: ball too far back to hit end game
-                if (ball.Y + ball.GetRadius() >= paddle.Y)
+                // remove bricks from canvas and list
+                foreach (Brick brick in removeBricks)
                 {
-                    //    gameTimer.IsEnabled = false;
+                    wpfCanvas.Children.Remove(brick.GetRectangle());
+                    bricks.Remove(brick);
+                }
+                removeBricks.Clear();
+                
+
+                // Game Over: ball too far back to hit end game
+                if (EndGame() || EndLevel())
+                {
                     //    labelGameOver.Visibility = Visibility.Visible;
                     PauseEvent(sender, null);
                 }
@@ -239,19 +280,36 @@ namespace Brick_Breaker
 
         private bool EndGame()
         {
-            //foreach (Ball ball in balls)
-            //{
-            //    if (ball.Y + ball.GetRadius() >= paddle.Y) return f
-            //}
-            //if (ball.Y + ball.GetRadius() >= paddle.Y)
-            //{
+            // check if a ball is above paddle
+            foreach (Ball ball in balls)
+            {
+                if (ball.Y + ball.GetRadius() <= paddle.Y) return false;
+            }
 
-            //}
-            return false;
+            // no balls about paddle
+            return true;
+        }
+
+        private bool EndLevel()
+        {
+            return bricks.Count == 0;
         }
 
         private void StartEvent(object sender, RoutedEventArgs e)
         {
+            if (EndGame())
+            {
+                // restart game
+                level = 1;
+                LoadLevel(level);
+                score = 0;
+                UpdateScore();
+            }
+
+            if (EndLevel())
+            {
+                LoadLevel(++level);
+            }
 
             gameTimer.IsEnabled = true;
         }
@@ -259,7 +317,6 @@ namespace Brick_Breaker
         private void PauseEvent(object sender, RoutedEventArgs e)
         {
             gameTimer.IsEnabled = false;
-
         }
 
         private void HelpEvent(object sender, RoutedEventArgs e)
@@ -311,9 +368,20 @@ namespace Brick_Breaker
             }
         }
 
-        private void IncreaseScore()
+        private void BrickHit(Brick brick)
         {
-            score++;
+            UpdateScore(1);
+            brick.Remove = true;
+        }
+
+        private void PaddleHit(Paddle paddle)
+        {
+            // play sound
+        }
+
+        private void UpdateScore(int increment = 0)
+        {
+            score += increment;
             labelScoreNum.Content = score;
         }
     }

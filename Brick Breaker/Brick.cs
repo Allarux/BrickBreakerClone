@@ -12,6 +12,7 @@ namespace Brick_Breaker
     {
         private Rectangle rectangle;
         private int x, y, width, height;
+        private bool remove;
 
         public Brick(int x, int y, int width, int height)
         {
@@ -20,6 +21,7 @@ namespace Brick_Breaker
             this.y = y;
             this.width = width;
             this.height = height;
+            this.remove = false;
 
             // brick shape
             CreateRectangle();
@@ -58,6 +60,12 @@ namespace Brick_Breaker
         public int Height
         {
             get { return height; }
+        }
+
+        public bool Remove
+        {
+            get { return remove; }
+            set { remove = value; }
         }
     }
 }
