@@ -286,7 +286,7 @@ namespace Brick_Breaker
                 if (ball.Y + ball.GetRadius() <= paddle.Y) return false;
             }
 
-            // no balls about paddle
+            // no balls above paddle
             return true;
         }
 
@@ -297,6 +297,7 @@ namespace Brick_Breaker
 
         private void StartEvent(object sender, RoutedEventArgs e)
         {
+            // player loses game
             if (EndGame())
             {
                 // restart game
@@ -306,6 +307,13 @@ namespace Brick_Breaker
                 UpdateScore();
             }
 
+            // player wins game
+            if (level == 3)
+            {
+
+            }
+
+            // advance to next leve
             if (EndLevel())
             {
                 LoadLevel(++level);
@@ -317,6 +325,12 @@ namespace Brick_Breaker
         private void PauseEvent(object sender, RoutedEventArgs e)
         {
             gameTimer.IsEnabled = false;
+
+            // player wins game
+            if (level == 3)
+            {
+                labelWinner.Visibility = Visibility.Visible;
+            }
         }
 
         private void HelpEvent(object sender, RoutedEventArgs e)

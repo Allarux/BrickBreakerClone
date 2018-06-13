@@ -18,7 +18,9 @@
             </MenuItem>
         </Menu>
 
-        <Canvas x:Name="wpfCanvas" HorizontalAlignment="Left" Height="521" Margin="10,30,0,0" VerticalAlignment="Top" Width="772" Background="Gray"/>
+        <Canvas x:Name="wpfCanvas" HorizontalAlignment="Left" Height="521" Margin="10,30,0,0" VerticalAlignment="Top" Width="772" Background="Gray">
+            <Label x:Name="labelWinner" Content="Winner!" Canvas.Left="260" Canvas.Top="167" FontSize="48" FontWeight="Bold" Foreground="White" Visibility="Hidden"/>
+        </Canvas>
         <Label x:Name="label" Content="Score:" HorizontalAlignment="Left" Margin="817,30,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="labelScoreNum" Content="0" HorizontalAlignment="Left" Margin="839,77,0,0" VerticalAlignment="Top" FontSize="24"/>
     </Grid>
