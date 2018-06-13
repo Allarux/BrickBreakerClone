@@ -50,6 +50,12 @@ namespace Brick_Breaker
 
             // brick init
             bricks.Add(new Brick(75, 50, 80, 30));
+            bricks.Add(new Brick(150, 350, 80, 30));
+            bricks.Add(new Brick(550, 50, 80, 30));
+            bricks.Add(new Brick(350, 90, 80, 30));
+            bricks.Add(new Brick(650, 150, 80, 30));
+            bricks.Add(new Brick(500, 170, 10, 10));
+            bricks.Add(new Brick(470, 450, 80, 30));
             foreach (Brick curBrick in bricks)
             {
                 wpfCanvas.Children.Add(curBrick.GetRectangle());
@@ -130,12 +136,12 @@ namespace Brick_Breaker
                     if (topRightHit)
                     {
                         CornerBounce(ball, paddle.X + paddle.Width, paddle.Y);
-                        IncreaseScore();
+                        //IncreaseScore();
                     }
                     if (topLeftHit)
                     {
                         CornerBounce(ball, paddle.X, paddle.Y);
-                        IncreaseScore();
+                        //IncreaseScore();
                     }
                 }
 
@@ -144,9 +150,9 @@ namespace Brick_Breaker
                 {
                     Point ballCenter = ball.getCenter();
 
-                    Console.WriteLine(ball.GetRadius());
-                    Console.WriteLine(brick.Width);
-                    Console.WriteLine(brick.X - ball.GetRadius() + " <= " + ballCenter.X + " <= " + (brick.X + brick.Width + ball.GetRadius()));
+                    //Console.WriteLine(ball.GetRadius());
+                    //Console.WriteLine(brick.Width);
+                    //Console.WriteLine(brick.X - ball.GetRadius() + " <= " + ballCenter.X + " <= " + (brick.X + brick.Width + ball.GetRadius()));
                     if (brick.X - ball.GetRadius() <= ballCenter.X && ballCenter.X <= brick.X + brick.Width + ball.GetRadius())
                     {
                         if (brick.Y - ball.GetRadius() <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height + ball.GetRadius())
@@ -156,21 +162,49 @@ namespace Brick_Breaker
                             // top and bottom
                             if (brick.X <= ballCenter.X && ballCenter.X <= brick.X + brick.Width)
                             {
-                                ball.Y *= -1;
+                                ball.Dy *= -1;
+                                IncreaseScore();
+                            }
+                            if (brick.Y <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height)
+                            {
+                                ball.Dx *= -1;
+                                IncreaseScore();
+                            }
+
+                            // corners
+                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y) <= ball.GetRadius()) // top left
+                            {
+                                CornerBounce(ball, brick.X, brick.Y);
+                                IncreaseScore();
+                            }
+                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y) <= ball.GetRadius()) // top right
+                            {
+                                CornerBounce(ball, brick.X + brick.Width, brick.Y);
+                                IncreaseScore();
+                            }
+                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y + brick.Height) <= ball.GetRadius()) // bottom left
+                            {
+                                CornerBounce(ball, brick.X, brick.Y + brick.Height);
+                                IncreaseScore();
+                            }
+                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y + brick.Height) <= ball.GetRadius()) // bottom right
+                            {
+                                CornerBounce(ball, brick.X + brick.Width, brick.Y + brick.Height);
+                                IncreaseScore();
                             }
                         }
                     }
 
-                    if (brick.X <= ballCenter.X && ballCenter.X <= brick.X + brick.Width) // ball in brick X range?
-                    {
-                        if (brick.Y <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height) // ball in brick Y range?
-                        {
+                    //if (brick.X <= ballCenter.X && ballCenter.X <= brick.X + brick.Width) // ball in brick X range?
+                    //{
+                    //    if (brick.Y <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height) // ball in brick Y range?
+                    //    {
 
-                        }
-                    } else
-                    {
-                        // maybe 
-                    }
+                    //    }
+                    //} else
+                    //{
+                    //    // maybe 
+                    //}
                 }
 
                 // Game Over: ball too far back to hit end game
@@ -203,8 +237,22 @@ namespace Brick_Breaker
             return Math.Sqrt(Math.Pow((x1 - x2), 2) + Math.Pow((y1 - y2), 2));
         }
 
+        private bool EndGame()
+        {
+            //foreach (Ball ball in balls)
+            //{
+            //    if (ball.Y + ball.GetRadius() >= paddle.Y) return f
+            //}
+            //if (ball.Y + ball.GetRadius() >= paddle.Y)
+            //{
+
+            //}
+            return false;
+        }
+
         private void StartEvent(object sender, RoutedEventArgs e)
         {
+
             gameTimer.IsEnabled = true;
         }
 
@@ -265,7 +313,8 @@ namespace Brick_Breaker
 
         private void IncreaseScore()
         {
-
+            score++;
+            labelScoreNum.Content = score;
         }
     }
 }
