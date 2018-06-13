@@ -34,21 +34,21 @@ namespace Brick_Breaker
         {
             InitializeComponent();
 
-            // ball init
-            Random rnd = new Random();
-            balls.Add(new Ball(40, 81, (int)wpfCanvas.Height - 100, 0, 3));
-            foreach (Ball curBall in balls) {
-                // attach balls to canvas
-                wpfCanvas.Children.Add(curBall.GetEllipse());
-                Canvas.SetTop(curBall.GetEllipse(), curBall.Y);
-                Canvas.SetLeft(curBall.GetEllipse(), curBall.X);
-            }
+            //// ball init
+            //Random rnd = new Random();
+            //balls.Add(new Ball(40, 81, (int)wpfCanvas.Height - 100, 0, 3));
+            //foreach (Ball curBall in balls) {
+            //    // attach balls to canvas
+            //    wpfCanvas.Children.Add(curBall.GetEllipse());
+            //    Canvas.SetTop(curBall.GetEllipse(), curBall.Y);
+            //    Canvas.SetLeft(curBall.GetEllipse(), curBall.X);
+            //}
 
-            // paddle init
-            paddle = new Paddle(0, (int) wpfCanvas.Height - 50, 100, 30);
-            wpfCanvas.Children.Add(paddle.GetRectangle());
-            Canvas.SetTop(paddle.GetRectangle(), paddle.Y);
-            Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
+            ////paddle init
+            //paddle = new Paddle(0, (int)wpfCanvas.Height - 50, 100, 30);
+            //wpfCanvas.Children.Add(paddle.GetRectangle());
+            //Canvas.SetTop(paddle.GetRectangle(), paddle.Y);
+            //Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
 
             //// brick init
             //bricks.Add(new Brick(75, 50, 80, 30));
@@ -72,7 +72,7 @@ namespace Brick_Breaker
             // animation timer
             gameTimer.Interval = new TimeSpan(16000);
             gameTimer.Tick += gameTick;
-            gameTimer.IsEnabled = true;
+            //gameTimer.IsEnabled = true;
 
             // score board
             score = 0;
@@ -87,9 +87,24 @@ namespace Brick_Breaker
             foreach (Brick brick in removeBricks)
             {
                 wpfCanvas.Children.Remove(brick.GetRectangle());
-                bricks.Remove(brick);
             }
             removeBricks.Clear();
+            bricks.Clear();
+
+            // remove existing paddle if any
+            if (paddle != null) wpfCanvas.Children.Remove(paddle.GetRectangle());
+            paddle = null;
+
+            // remove existing balls if any
+            List<Ball> removeBalls = new List<Ball>();
+            removeBalls.AddRange(balls);
+            foreach (Ball ball in removeBalls)
+            {
+                wpfCanvas.Children.Remove(ball.GetEllipse());
+            }
+            removeBalls.Clear();
+            balls.Clear();
+
 
             // open file and get default width and height
             string[] lines = File.ReadAllLines("../../level" + level + ".csv");
@@ -114,6 +129,22 @@ namespace Brick_Breaker
                 wpfCanvas.Children.Add(curBrick.GetRectangle());
                 Canvas.SetTop(curBrick.GetRectangle(), curBrick.Y);
                 Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);
+            }
+
+            // recreate and reset paddle
+            paddle = new Paddle(0, (int)wpfCanvas.Height - 50, 100, 30);
+            paddle.X = (int) (wpfCanvas.Width / 2) - (paddle.Width / 2);
+            wpfCanvas.Children.Add(paddle.GetRectangle());
+            Canvas.SetTop(paddle.GetRectangle(), paddle.Y);
+            Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
+
+            // recreate and resest ball
+            balls.Add(new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 2, -3));
+            foreach (Ball ball in balls)
+            {
+                wpfCanvas.Children.Add(ball.GetEllipse());
+                Canvas.SetTop(ball.GetEllipse(), ball.Y);
+                Canvas.SetLeft(ball.GetEllipse(), ball.X);
             }
         }
 
@@ -306,15 +337,11 @@ namespace Brick_Breaker
                 score = 0;
                 UpdateScore();
             }
-
-            // player wins game
-            if (level == 3)
+            else if (level == 3) // player wins game
             {
 
             }
-
-            // advance to next leve
-            if (EndLevel())
+            else if (EndLevel()) // advance to next leve
             {
                 LoadLevel(++level);
             }
@@ -330,6 +357,12 @@ namespace Brick_Breaker
             if (level == 3)
             {
                 labelWinner.Visibility = Visibility.Visible;
+            }
+
+            // player loses game
+            if (EndGame())
+            {
+
             }
         }
 
