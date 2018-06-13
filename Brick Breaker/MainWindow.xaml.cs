@@ -28,6 +28,7 @@ namespace Brick_Breaker
         private Paddle paddle;
         private long score;
         private int level;
+        private int maxLevels;
         private long highScore;
 
         public MainWindow()
@@ -67,6 +68,7 @@ namespace Brick_Breaker
 
             // load level
             level = 1;
+            maxLevels = 3;
             LoadLevel(level);
 
             // animation timer
@@ -278,14 +280,13 @@ namespace Brick_Breaker
                     bricks.Remove(brick);
                 }
                 removeBricks.Clear();
-                
+            }
 
-                // Game Over: ball too far back to hit end game
-                if (EndGame() || EndLevel())
-                {
-                    //    labelGameOver.Visibility = Visibility.Visible;
-                    PauseEvent(sender, null);
-                }
+            // Game Over: balls too far back to hit end game
+            if (EndGame() || EndLevel())
+            {
+                //    labelGameOver.Visibility = Visibility.Visible;
+                PauseEvent(sender, null);
             }
         }
 
@@ -326,25 +327,33 @@ namespace Brick_Breaker
             return bricks.Count == 0;
         }
 
+        private bool CompleteGame()
+        {
+            return level == maxLevels && bricks.Count == 0;
+        }
+
         private void StartEvent(object sender, RoutedEventArgs e)
         {
-            // player loses game
-            if (EndGame())
+            // player loses or wins game
+            if (EndGame() || CompleteGame())
             {
                 // restart game
                 level = 1;
                 LoadLevel(level);
                 score = 0;
                 UpdateScore();
-            }
-            else if (level == 3) // player wins game
-            {
 
+                // remove lose or win message
+                labelWinner.Visibility = Visibility.Hidden;
+                labelGameOver.Visibility = Visibility.Hidden;
             }
-            else if (EndLevel()) // advance to next leve
-            {
-                LoadLevel(++level);
-            }
+
+            labelLevel.Visibility = Visibility.Hidden;
+
+            //else if (EndLevel()) // advance to next leve
+            //{
+            //    LoadLevel(++level);
+            //}
 
             gameTimer.IsEnabled = true;
         }
@@ -354,15 +363,19 @@ namespace Brick_Breaker
             gameTimer.IsEnabled = false;
 
             // player wins game
-            if (level == 3)
+            if (CompleteGame())
             {
                 labelWinner.Visibility = Visibility.Visible;
             }
-
-            // player loses game
-            if (EndGame())
+            else if (EndGame()) // player loses game
             {
-
+                labelGameOver.Visibility = Visibility.Visible;
+            }
+            else if (EndLevel()) // advance to next level
+            {
+                LoadLevel(++level);
+                labelLevel.Content = "Level: " + level;
+                labelLevel.Visibility = Visibility.Visible;
             }
         }
 
