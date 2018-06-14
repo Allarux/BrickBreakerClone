@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="PowerUp.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -117,6 +118,7 @@
     <Content Include="Sounds\ping_pong_8bit_beeep.wav" />
     <Content Include="Sounds\win.wav" />
     <Content Include="Sounds\youLose.wav" />
+    <Resource Include="Textures\ball.png" />
     <Resource Include="Textures\bullet.png" />
     <Resource Include="Textures\paddle-1.png" />
     <Resource Include="Textures\goldBrick.png" />

@@ -14,8 +14,9 @@ namespace Brick_Breaker
         private Rectangle rectangle;
         private int x, y, width, height;
         private bool remove;
+        private string powerUp;
 
-        public Brick(int x, int y, int width, int height, string color)
+        public Brick(int x, int y, int width, int height, string color, string powerUp)
         {
             // brick data
             this.x = x;
@@ -23,6 +24,7 @@ namespace Brick_Breaker
             this.width = width;
             this.height = height;
             this.remove = false;
+            this.powerUp = powerUp;
             // brick shape
             CreateRectangle(color);
         }
@@ -66,6 +68,11 @@ namespace Brick_Breaker
         {
             get { return remove; }
             set { remove = value; }
+        }
+
+        public string PowerUp
+        {
+               get { return powerUp; }
         }
 
         public void SetBrickTexture(string brickColor) 
