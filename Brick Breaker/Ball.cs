@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Brick_Breaker
@@ -20,9 +21,9 @@ namespace Brick_Breaker
         {
             // shape
             ellipse = new Ellipse();
-            ellipse.Fill = Brushes.Aqua;
             ellipse.Width = diameter;
             ellipse.Height = diameter;
+            SetBallTexture();
 
             // ball data
             this.diameter = diameter;
@@ -81,6 +82,13 @@ namespace Brick_Breaker
         {
             get { return dy; }
             set { dy = value; }
+        }
+
+        private void SetBallTexture()
+        {
+            ImageBrush brush = new ImageBrush();
+            brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/ball.png"));
+            this.ellipse.Fill = brush;
         }
     }
 }
