@@ -27,6 +27,7 @@ namespace Brick_Breaker
         private DispatcherTimer gameTimer = new DispatcherTimer();
         private List<Ball> balls = new List<Ball>();
         private List<Brick> bricks = new List<Brick>();
+        private List<PowerUp> powerUps = new List<PowerUp>();
         private Paddle paddle;
         private long score;
         private int level, maxLevels;
@@ -127,9 +128,9 @@ namespace Brick_Breaker
                 int x =  Int32.Parse(values[0]);
                 int y = Int32.Parse(values[1]);
                 string color = values[2];
-                string goody = values[4];
+                string powerUp = values[4];
 
-                bricks.Add(new Brick(x, y, width, height, color));
+                bricks.Add(new Brick(x, y, width, height, color, powerUp));
             }
 
             // add bricks to canvas
@@ -293,6 +294,40 @@ namespace Brick_Breaker
                 }
                 removeBricks.Clear();
             }
+
+            ////////////////////
+            // Power up logic //
+            ////////////////////
+            List<PowerUp> removePowerUps = new List<PowerUp>();
+            foreach (PowerUp powerUp in powerUps)
+            {
+                // update position
+                powerUp.UpdatePosition();
+                Canvas.SetTop(powerUp.GetRectangle(), powerUp.Y);
+                Canvas.SetLeft(powerUp.GetRectangle(), powerUp.X);
+
+                // paddle collision
+                if (powerUp.Y + powerUp.Height + 1 >= paddle.Y)
+                {
+                    // power up on paddle
+                    if (paddle.X <= powerUp.X + powerUp.Width && powerUp.X - powerUp.Width <= paddle.X + paddle.Width)
+                    {
+                        // power up hit paddle
+
+                        // TODO: paddle hit power up so add power up to game
+                    }
+
+                    // remove power up
+                    removePowerUps.Add(powerUp);
+                }
+            }
+
+            foreach (PowerUp powerUp in removePowerUps)
+            {
+                wpfCanvas.Children.Remove(powerUp.GetRectangle());
+                powerUps.Remove(powerUp);
+            }
+            removePowerUps.Clear();
 
             // Game Over: balls too far back to hit end game
             if (EndGame() || EndLevel())
@@ -475,8 +510,21 @@ namespace Brick_Breaker
 
         private void BrickHit(Brick brick)
         {
+            // scoure and remove
             UpdateScore(1);
             brick.Remove = true;
+
+            // power up drop
+            if (brick.PowerUp != "none")
+            {
+                PowerUp newPowerUp = new PowerUp(brick.X + (brick.Width / 2) - 7.5, brick.Y, 3, brick.PowerUp);
+                powerUps.Add(newPowerUp);
+                wpfCanvas.Children.Add(newPowerUp.GetRectangle());
+                Canvas.SetTop(newPowerUp.GetRectangle(), newPowerUp.Y);
+                Canvas.SetLeft(newPowerUp.GetRectangle(), newPowerUp.X);
+            }
+
+            // sound
             string fileName = "brickHit.wav";
             string path = System.IO.Path.Combine("../../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
