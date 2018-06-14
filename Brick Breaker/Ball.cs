@@ -12,11 +12,11 @@ namespace Brick_Breaker
     class Ball
     {
         private Ellipse ellipse;
-        private double x, y, dx, dy, speed;
+        private double x, y, dx, dy;
         private double diameter;
 
         // DX and DY must be a unit vector for speed to work properly
-        public Ball(double diameter, double startX, double startY, double startDX, double startDY, double startSpeed)
+        public Ball(double diameter, double startX, double startY, double startDX, double startDY)
         {
             // shape
             ellipse = new Ellipse();
@@ -30,7 +30,6 @@ namespace Brick_Breaker
             y = startY;
             dx = startDX;
             dy = startDY;
-            speed = startSpeed;
         }
 
         public Ellipse GetEllipse()
@@ -54,10 +53,10 @@ namespace Brick_Breaker
             return new Point(x + GetRadius(), y + GetRadius());
         }
 
-        public void UpdatePosition()
+        public void UpdatePosition(double speed, double incrementSpeed, int level)
         {
-            x += dx * speed;
-            y += dy * speed;
+            x += dx * (speed + ((level - 1) * incrementSpeed));
+            y += dy * (speed + ((level - 1) * incrementSpeed));
         }
 
         public double X
