@@ -34,7 +34,8 @@ namespace Brick_Breaker
         private double defaultSpeed, incrementSpeed;
         private long highScore;
         private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
-        private int ammo = 5;
+        private int ammo = 999;
+        private bool CHEAT = true; //for debuggin
 
         public MainWindow()
         {
@@ -115,6 +116,15 @@ namespace Brick_Breaker
             }
             removeBalls.Clear();
             balls.Clear();
+
+            // remove existing bullets if any
+            List<Bullet> removeBullets = new List<Bullet>();
+            removeBullets.AddRange(bullets);
+            foreach (Bullet bullet in removeBullets) 
+            {
+                wpfCanvas.Children.Remove(bullet.GetEllipse());
+            }
+            bullets.Clear();
 
 
             // open file and get default width and height
@@ -364,11 +374,12 @@ namespace Brick_Breaker
 
 
             // Game Over: balls too far back to hit end game
-            if (EndGame() || EndLevel())
+            if (EndGame() || EndLevel()) 
             {
                 //    labelGameOver.Visibility = Visibility.Visible;
                 PauseEvent(sender, null);
             }
+            
         }
 
         private void CornerBounce(Ball gb, double cornerX, double cornerY)
@@ -450,12 +461,12 @@ namespace Brick_Breaker
                 labelWinner.Visibility = Visibility.Visible;
                 GameWinSound();
             }
-            else if (EndGame()) // player loses game
-            {
-                this.labelAmmoCounter.Content = "0";
-                labelGameOver.Visibility = Visibility.Visible;
-                GameOverSound();
-            }
+            //else if (EndGame()) // player loses game
+            //{
+            //    this.labelAmmoCounter.Content = "0";
+            //    labelGameOver.Visibility = Visibility.Visible;
+            //    GameOverSound();
+            //}
             else if (EndLevel()) // advance to next level
             {
                 LoadLevel(++level);
