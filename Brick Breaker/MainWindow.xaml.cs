@@ -27,17 +27,20 @@ namespace Brick_Breaker
         private DispatcherTimer gameTimer = new DispatcherTimer();
         private List<Ball> balls = new List<Ball>();
         private List<Brick> bricks = new List<Brick>();
-        private List<Bullet> bullets = new List<Bullet>();
         private Paddle paddle;
         private long score;
-        private int level;
-        private int maxLevels;
+        private int level, maxLevels;
+        private double defaultSpeed, incrementSpeed;
         private long highScore;
-
+        private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            // speed settings
+            defaultSpeed = 2.7;
+            incrementSpeed = 1.0;
 
             //// ball init
             //Random rnd = new Random();
@@ -147,7 +150,7 @@ namespace Brick_Breaker
             Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
 
             // recreate and resest ball
-            balls.Add(new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 2, -3));
+            balls.Add(new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 0.70710678, -0.70710678));
             foreach (Ball ball in balls)
             {
                 wpfCanvas.Children.Add(ball.GetEllipse());
@@ -187,7 +190,7 @@ namespace Brick_Breaker
             ////////////////
             foreach (Ball ball in balls)
             {
-                ball.UpdatePosition();
+                ball.UpdatePosition(defaultSpeed, incrementSpeed, level);
 
                 // update ball canvas position
                 Canvas.SetTop(ball.GetEllipse(), ball.Y);
@@ -246,32 +249,34 @@ namespace Brick_Breaker
                                 ball.Dy *= -1;
                                 BrickHit(brick);
                             }
-                            if (brick.Y <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height)
+                            else if (brick.Y <= ballCenter.Y && ballCenter.Y <= brick.Y + brick.Height) // left and right
                             {
                                 ball.Dx *= -1;
                                 BrickHit(brick);
                             }
-
-                            // corners
-                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y) <= ball.GetRadius()) // top left
+                            else
                             {
-                                CornerBounce(ball, brick.X, brick.Y);
-                                BrickHit(brick);
-                            }
-                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y) <= ball.GetRadius()) // top right
-                            {
-                                CornerBounce(ball, brick.X + brick.Width, brick.Y);
-                                BrickHit(brick);
-                            }
-                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y + brick.Height) <= ball.GetRadius()) // bottom left
-                            {
-                                CornerBounce(ball, brick.X, brick.Y + brick.Height);
-                                BrickHit(brick);
-                            }
-                            if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y + brick.Height) <= ball.GetRadius()) // bottom right
-                            {
-                                CornerBounce(ball, brick.X + brick.Width, brick.Y + brick.Height);
-                                BrickHit(brick);
+                                // corners
+                                if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y) <= ball.GetRadius()) // top left
+                                {
+                                    CornerBounce(ball, brick.X, brick.Y);
+                                    BrickHit(brick);
+                                }
+                                if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y) <= ball.GetRadius()) // top right
+                                {
+                                    CornerBounce(ball, brick.X + brick.Width, brick.Y);
+                                    BrickHit(brick);
+                                }
+                                if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X, brick.Y + brick.Height) <= ball.GetRadius()) // bottom left
+                                {
+                                    CornerBounce(ball, brick.X, brick.Y + brick.Height);
+                                    BrickHit(brick);
+                                }
+                                if (CalcDistance(ballCenter.X, ballCenter.Y, brick.X + brick.Width, brick.Y + brick.Height) <= ball.GetRadius()) // bottom right
+                                {
+                                    CornerBounce(ball, brick.X + brick.Width, brick.Y + brick.Height);
+                                    BrickHit(brick);
+                                }
                             }
                         }
                     }
@@ -287,21 +292,7 @@ namespace Brick_Breaker
                     bricks.Remove(brick);
                 }
                 removeBricks.Clear();
-            }//end of ball logic
-
-            //////////////////
-            // bullet logic //
-            //////////////////
-
-            foreach(Bullet bullet in bullets) 
-            {
-                bullet.UpdatePosition();
-
-                // update ball canvas position
-                Canvas.SetTop(bullet.GetEllipse(), bullet.Y);
-                Canvas.SetLeft(bullet.GetEllipse(), bullet.X);
             }
-
 
             // Game Over: balls too far back to hit end game
             if (EndGame() || EndLevel())
@@ -404,6 +395,35 @@ namespace Brick_Breaker
             }
         }
 
+        private void SettingsEvent(object sender, RoutedEventArgs e)
+        {
+            PauseEvent(sender, e);
+
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.textBoxDefaultSpeed.Text = defaultSpeed.ToString();
+            settingsWindow.textBoxSpeedIncrement.Text = incrementSpeed.ToString();
+
+            settingsWindow.ShowDialog();
+
+            try
+            {
+                double tempDefaultSpeed = Double.Parse(settingsWindow.textBoxDefaultSpeed.Text);
+                double tempIncrementSpeed = Double.Parse(settingsWindow.textBoxSpeedIncrement.Text);
+
+                defaultSpeed = tempDefaultSpeed;
+                incrementSpeed = tempIncrementSpeed;
+            }
+            catch (Exception)
+            {
+                MessageBoxResult result = MessageBox.Show("New setting contained invalid data. New settings are not applied.", "Bad settings", MessageBoxButton.OK);
+            }
+            
+
+            // reset game
+            level = 1;
+            LoadLevel(level);
+        }
+
         private void HelpEvent(object sender, RoutedEventArgs e)
         {
 
@@ -458,7 +478,7 @@ namespace Brick_Breaker
             UpdateScore(1);
             brick.Remove = true;
             string fileName = "brickHit.wav";
-            string path = System.IO.Path.Combine("../Sounds/", fileName);
+            string path = System.IO.Path.Combine("../../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
@@ -466,7 +486,7 @@ namespace Brick_Breaker
         {
             // play sound
             string fileName = "ping_pong_8bit_beeep.wav";
-            string path = System.IO.Path.Combine("../Sounds/", fileName);
+            string path = System.IO.Path.Combine("../../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
 
         }
@@ -474,28 +494,28 @@ namespace Brick_Breaker
         private void WallHit()
         {
             string fileName = "betterWallHit.wav";
-            string path = System.IO.Path.Combine("../ Sounds/", fileName);
+            string path = System.IO.Path.Combine("../../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
         private void NextLevelSound()
         {
             string fileName = "nextLevel.wav";
-            string path = System.IO.Path.Combine("../Sounds/", fileName);
+            string path = System.IO.Path.Combine("../../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
         private void GameOverSound()
         {
             string fileName = "youLose.wav";
-            string path = System.IO.Path.Combine("../Sounds/", fileName);
+            string path = System.IO.Path.Combine("../../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
         private void GameWinSound()
         {
             string fileName = "win.wav";
-            string path = System.IO.Path.Combine("../Sounds/", fileName);
+            string path = System.IO.Path.Combine("../../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 

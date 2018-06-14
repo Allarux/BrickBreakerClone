@@ -15,6 +15,7 @@ namespace Brick_Breaker
         private double x, y, dx, dy;
         private double diameter;
 
+        // DX and DY must be a unit vector for speed to work properly
         public Ball(double diameter, double startX, double startY, double startDX, double startDY)
         {
             // shape
@@ -52,10 +53,10 @@ namespace Brick_Breaker
             return new Point(x + GetRadius(), y + GetRadius());
         }
 
-        public void UpdatePosition()
+        public void UpdatePosition(double speed, double incrementSpeed, int level)
         {
-            x += dx;
-            y += dy;
+            x += dx * (speed + ((level - 1) * incrementSpeed));
+            y += dy * (speed + ((level - 1) * incrementSpeed));
         }
 
         public double X
