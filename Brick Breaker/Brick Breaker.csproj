@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="Ball.cs" />
     <Compile Include="Brick.cs" />
+    <Compile Include="Bullet.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -109,6 +110,7 @@
     <Content Include="Sounds\ping_pong_8bit_beeep.wav" />
     <Content Include="Sounds\win.wav" />
     <Content Include="Sounds\youLose.wav" />
+    <Resource Include="Textures\bullet.png" />
     <Resource Include="Textures\paddle-1.png" />
     <Resource Include="Textures\goldBrick.png" />
     <Resource Include="Textures\purpleBrick.png" />

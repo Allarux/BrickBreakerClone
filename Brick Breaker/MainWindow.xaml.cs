@@ -27,12 +27,13 @@ namespace Brick_Breaker
         private DispatcherTimer gameTimer = new DispatcherTimer();
         private List<Ball> balls = new List<Ball>();
         private List<Brick> bricks = new List<Brick>();
+        private List<Bullet> bullets = new List<Bullet>();
         private Paddle paddle;
         private long score;
         private int level;
         private int maxLevels;
         private long highScore;
-        private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+
 
         public MainWindow()
         {
@@ -286,7 +287,21 @@ namespace Brick_Breaker
                     bricks.Remove(brick);
                 }
                 removeBricks.Clear();
+            }//end of ball logic
+
+            //////////////////
+            // bullet logic //
+            //////////////////
+
+            foreach(Bullet bullet in bullets) 
+            {
+                bullet.UpdatePosition();
+
+                // update ball canvas position
+                Canvas.SetTop(bullet.GetEllipse(), bullet.Y);
+                Canvas.SetLeft(bullet.GetEllipse(), bullet.X);
             }
+
 
             // Game Over: balls too far back to hit end game
             if (EndGame() || EndLevel())
@@ -443,7 +458,7 @@ namespace Brick_Breaker
             UpdateScore(1);
             brick.Remove = true;
             string fileName = "brickHit.wav";
-            string path = System.IO.Path.Combine("Sounds/", fileName);
+            string path = System.IO.Path.Combine("../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
@@ -451,7 +466,7 @@ namespace Brick_Breaker
         {
             // play sound
             string fileName = "ping_pong_8bit_beeep.wav";
-            string path = System.IO.Path.Combine("Sounds/", fileName);
+            string path = System.IO.Path.Combine("../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
 
         }
@@ -459,28 +474,28 @@ namespace Brick_Breaker
         private void WallHit()
         {
             string fileName = "betterWallHit.wav";
-            string path = System.IO.Path.Combine("Sounds/", fileName);
+            string path = System.IO.Path.Combine("../ Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
         private void NextLevelSound()
         {
             string fileName = "nextLevel.wav";
-            string path = System.IO.Path.Combine("Sounds/", fileName);
+            string path = System.IO.Path.Combine("../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
         private void GameOverSound()
         {
             string fileName = "youLose.wav";
-            string path = System.IO.Path.Combine("Sounds/", fileName);
+            string path = System.IO.Path.Combine("../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
         private void GameWinSound()
         {
             string fileName = "win.wav";
-            string path = System.IO.Path.Combine("Sounds/", fileName);
+            string path = System.IO.Path.Combine("../Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
