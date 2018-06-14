@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Media;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,6 +31,7 @@ namespace Brick_Breaker
         private long score;
         private int level;
         private long highScore;
+        private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
 
         public MainWindow()
         {
@@ -155,10 +158,10 @@ namespace Brick_Breaker
                 Canvas.SetLeft(ball.GetEllipse(), ball.X);
 
                 // edge canvas ball bounce
-                if (ball.Y <= 0) ball.Dy *= -1; // top
-                if (ball.Y + ball.Diameter >= wpfCanvas.Height) ball.Dy *= -1; // bottom
-                if (ball.X + ball.Diameter >= wpfCanvas.Width) ball.Dx *= -1; // right
-                if (ball.X <= 0) ball.Dx *= -1; // right
+                if (ball.Y <= 0) { ball.Dy *= -1; WallHit(); } // top
+                if (ball.Y + ball.Diameter >= wpfCanvas.Height) { ball.Dy *= -1; WallHit(); } // bottom
+                if (ball.X + ball.Diameter >= wpfCanvas.Width) { ball.Dx *= -1; WallHit(); } // right
+                if (ball.X <= 0) { ball.Dx *= -1; WallHit(); } // right
 
                 // paddle collision
                 if (paddle.X <= ball.X + ball.GetRadius() && ball.X + ball.GetRadius() <= paddle.X + paddle.Width) // ball in paddle X range?
@@ -167,6 +170,7 @@ namespace Brick_Breaker
                     {
                         // hit paddle
                         ball.Dy *= -1;
+                        PaddleHit(paddle);//added this - mg
                     }
                 }
                 else // not on top of paddle, maybe it is on the corners
@@ -386,11 +390,25 @@ namespace Brick_Breaker
         {
             UpdateScore(1);
             brick.Remove = true;
+            string fileName = "brickHit.wav";
+            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            (new SoundPlayer(path)).Play();
         }
 
         private void PaddleHit(Paddle paddle)
         {
             // play sound
+            string fileName = "ping_pong_8bit_beeep.wav";
+            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            (new SoundPlayer(path)).Play();
+
+        }
+
+        private void WallHit()
+        {
+            string fileName = "betterWallHit.wav";
+            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            (new SoundPlayer(path)).Play();
         }
 
         private void UpdateScore(int increment = 0)
