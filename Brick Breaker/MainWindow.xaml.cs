@@ -28,12 +28,14 @@ namespace Brick_Breaker
         private List<Ball> balls = new List<Ball>();
         private List<Brick> bricks = new List<Brick>();
         private List<PowerUp> powerUps = new List<PowerUp>();
+        private List<Bullet> bullets = new List<Bullet>();
         private Paddle paddle;
         private long score;
         private int level, maxLevels;
         private double defaultSpeed, incrementSpeed;
         private long highScore;
         private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+        private int ammo = 5;
 
         public MainWindow()
         {
@@ -158,6 +160,10 @@ namespace Brick_Breaker
                 Canvas.SetTop(ball.GetEllipse(), ball.Y);
                 Canvas.SetLeft(ball.GetEllipse(), ball.X);
             }
+
+            //update ammo counter
+            this.labelAmmoCounter.Content = ammo.ToString();
+
         }
 
         private void gameTick(object sender, EventArgs e)
@@ -293,7 +299,67 @@ namespace Brick_Breaker
                     bricks.Remove(brick);
                 }
                 removeBricks.Clear();
+            }//end of ball forloop
+
+            //////////////////
+            // bullet logic //
+            //////////////////
+
+            List<Bullet> removeBullets = new List<Bullet>();
+            foreach (Bullet bullet in bullets) 
+            {
+                bullet.UpdatePosition();
+                // bullet deletion
+                if (bullet.Y <= 0) { wpfCanvas.Children.Remove(bullet.GetEllipse()); removeBullets.Add(bullet); } // top
+                if (bullet.Y + bullet.Diameter >= wpfCanvas.Height) { wpfCanvas.Children.Remove(bullet.GetEllipse()); removeBullets.Add(bullet); } // bottom
+                if (bullet.X + bullet.Diameter >= wpfCanvas.Width) { wpfCanvas.Children.Remove(bullet.GetEllipse()); removeBullets.Add(bullet); } // right
+                if (bullet.X <= 0) { wpfCanvas.Children.Remove(bullet.GetEllipse()); removeBullets.Add(bullet); } // right
+                // update ball canvas position
+                Canvas.SetTop(bullet.GetEllipse(), bullet.Y);
+                Canvas.SetLeft(bullet.GetEllipse(), bullet.X);
             }
+
+            //bullet brick collision
+            List<Brick> shotBricks = new List<Brick>();
+            foreach (Bullet bullet in bullets) {
+                foreach (Brick brick in bricks) {
+                    Point bulletCenter = bullet.getCenter();
+                    // top and bottom
+                    //TODO: fix the collision
+                    if (brick.X <= bulletCenter.X + bullet.GetRadius() && bulletCenter.X - bullet.GetRadius() <= brick.X + brick.Width) {
+                        if (brick.Y <= bulletCenter.Y + bullet.GetRadius() && bulletCenter.Y - bullet.GetRadius() <= brick.Y + brick.Height) // left and right
+                        {
+                            //manually remove the bullet from canvas
+                            //wpfCanvas.Children.Remove(bullet.GetEllipse());
+                            
+                            removeBullets.Add(bullet);
+                            BrickHit(brick);
+                        }
+                        //BrickHit(brick);
+                    }
+                    //else if (brick.Y <= bulletCenter.Y && bulletCenter.Y <= brick.Y + brick.Height) // left and right
+                    //{
+                        
+                     //   BrickHit(brick);
+                    //}
+                    if (brick.Remove) shotBricks.Add(brick);
+                }
+                // remove bricks from canvas and list
+                foreach (Brick brick in shotBricks) {
+                    wpfCanvas.Children.Remove(brick.GetRectangle());
+                    bricks.Remove(brick);
+                }
+
+                
+            }//end of bullet forloop
+
+            //remove bullets
+            foreach (Bullet bulletToRemove in removeBullets) {
+                wpfCanvas.Children.Remove(bulletToRemove.GetEllipse());
+                bullets.Remove(bulletToRemove);
+            }
+            removeBullets.Clear();
+
 
             ////////////////////
             // Power up logic //
@@ -412,11 +478,13 @@ namespace Brick_Breaker
             // player wins game
             if (CompleteGame())
             {
+                this.labelAmmoCounter.Content = "0";
                 labelWinner.Visibility = Visibility.Visible;
                 GameWinSound();
             }
             else if (EndGame()) // player loses game
             {
+                this.labelAmmoCounter.Content = "0";
                 labelGameOver.Visibility = Visibility.Visible;
                 GameOverSound();
             }
@@ -506,11 +574,27 @@ namespace Brick_Breaker
             {
                 this.Close();
             }
+
+            //shoot bullets
+            if(e.Key == Key.Space) 
+            {
+                //create bullets
+                if(ammo > 0) {
+                    Point center = paddle.GetPaddleCenter;
+                    Bullet bullet = new Bullet(15, center.X, center.Y, 0.70710678, -2);
+                    bullets.Add(bullet);
+                    wpfCanvas.Children.Add(bullet.GetEllipse());
+                    ammo--;
+                    this.labelAmmoCounter.Content = ammo.ToString();
+                }
+            }
         }
+
+      
 
         private void BrickHit(Brick brick)
         {
-            // scoure and remove
+            // score and remove
             UpdateScore(1);
             brick.Remove = true;
 
