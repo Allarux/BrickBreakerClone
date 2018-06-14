@@ -12,7 +12,7 @@ namespace Brick_Breaker
     class Ball
     {
         private Ellipse ellipse;
-        private double x, y, dx, dy;
+        private double x, y, dx, dy, scalar;
         private double diameter;
 
         public Ball(double diameter, double startX, double startY, double startDX, double startDY)
