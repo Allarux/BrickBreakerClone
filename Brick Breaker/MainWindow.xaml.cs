@@ -29,14 +29,18 @@ namespace Brick_Breaker
         private List<Brick> bricks = new List<Brick>();
         private Paddle paddle;
         private long score;
-        private int level;
-        private int maxLevels;
+        private int level, maxLevels;
+        private double defaultSpeed, incrementSpeed;
         private long highScore;
         private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            // speed settings
+            defaultSpeed = 2.7;
+            incrementSpeed = 1.0;
 
             //// ball init
             //Random rnd = new Random();
@@ -144,7 +148,7 @@ namespace Brick_Breaker
             Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
 
             // recreate and resest ball
-            balls.Add(new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 2, -3));
+            balls.Add(new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 0.70710678, -0.70710678, defaultSpeed));
             foreach (Ball ball in balls)
             {
                 wpfCanvas.Children.Add(ball.GetEllipse());
@@ -381,6 +385,24 @@ namespace Brick_Breaker
                 labelLevel.Content = "Level: " + level;
                 labelLevel.Visibility = Visibility.Visible;
             }
+        }
+
+        private void SettingsEvent(object sender, RoutedEventArgs e)
+        {
+            PauseEvent(sender, e);
+
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.textBoxDefaultSpeed.Text = defaultSpeed.ToString();
+            settingsWindow.textBoxSpeedIncrement.Text = incrementSpeed.ToString();
+
+            settingsWindow.ShowDialog();
+
+            defaultSpeed = Double.Parse(settingsWindow.textBoxDefaultSpeed.Text);
+            incrementSpeed = Double.Parse(settingsWindow.textBoxSpeedIncrement.Text);
+
+            // reset game
+            level = 1;
+            LoadLevel(level);
         }
 
         private void HelpEvent(object sender, RoutedEventArgs e)

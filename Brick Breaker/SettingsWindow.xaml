@@ -5,8 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Brick_Breaker"
         mc:Ignorable="d"
-        Title="SettingsWindow" Height="450" Width="800">
+        Title="SettingsWindow" Height="220" Width="328">
     <Grid>
+
+
         
+        <Label Content="Default starting speed:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBoxDefaultSpeed" HorizontalAlignment="Left" Height="23" Margin="145,14,0,0" TextWrapping="Wrap" Text="#.##" VerticalAlignment="Top" Width="120"/>
+
+        <Label Content="Increase speed per level:" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBoxSpeedIncrement" HorizontalAlignment="Left" Height="24" Margin="154,49,0,0" TextWrapping="Wrap" Text="#.##" VerticalAlignment="Top" Width="120"/>
+        
+        <Label Content="Number of hit to destroy brick:" HorizontalAlignment="Left" Margin="10,80,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="24" Margin="188,84,0,0" TextWrapping="Wrap" Text="#" VerticalAlignment="Top" Width="120"/>
+        
+        <Label Content="Unlimited rockets:" HorizontalAlignment="Left" Margin="10,115,0,0" VerticalAlignment="Top"/>
+        <CheckBox Content="" HorizontalAlignment="Left" Margin="116,122,0,0" VerticalAlignment="Top"/>
+        <Button Content="OK" HorizontalAlignment="Left" Margin="126,149,0,0" VerticalAlignment="Top" Width="75" Click="CloseEvent"/>
+
+
     </Grid>
 </Window>
