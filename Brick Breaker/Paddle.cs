@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -84,5 +85,12 @@ namespace Brick_Breaker
             get { return goRight; }
             set { goRight = value; }
         }
+
+        public Point GetPaddleCenter 
+        {
+            get { return new Point(x + (width / 2), y + (height/2)); }
+        }
+
+
     }
 }

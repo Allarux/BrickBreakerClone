@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Brick_Breaker {
@@ -18,7 +19,9 @@ namespace Brick_Breaker {
         {
             // shape
             ellipse = new Ellipse();
-            ellipse.Fill = Brushes.Aqua;
+            ImageBrush brush = new ImageBrush();
+            brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/bullet.png"));
+            ellipse.Fill = brush;
             ellipse.Width = diameter;
             ellipse.Height = diameter;
 
@@ -52,7 +55,7 @@ namespace Brick_Breaker {
 
         public void UpdatePosition()
         {
-            x += dx;
+            //x += dx;
             y += dy;
         }
 

@@ -26,5 +26,9 @@
         </Canvas>
         <Label x:Name="label" Content="Score:" HorizontalAlignment="Left" Margin="817,30,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="labelScoreNum" Content="0" HorizontalAlignment="Left" Margin="839,77,0,0" VerticalAlignment="Top" FontSize="24"/>
+
+        <Label x:Name="labelAmmo" Content="Ammo" HorizontalAlignment="Left" Margin="817,184,0,0" VerticalAlignment="Top" Height="50" Width="91" FontSize="24"/>
+        <Label x:Name="labelAmmoCounter" Content="0" HorizontalAlignment="Left" Margin="834,234,0,0" VerticalAlignment="Top" Height="50" Width="28" FontSize="24" RenderTransformOrigin="0.685,0.6"/>
+
     </Grid>
 </Window>
