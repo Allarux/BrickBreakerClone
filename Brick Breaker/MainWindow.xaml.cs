@@ -46,37 +46,6 @@ namespace Brick_Breaker
             defaultSpeed = 2.7;
             incrementSpeed = 1.0;
 
-            //// ball init
-            //Random rnd = new Random();
-            //balls.Add(new Ball(40, 81, (int)wpfCanvas.Height - 100, 0, 3));
-            //foreach (Ball curBall in balls) {
-            //    // attach balls to canvas
-            //    wpfCanvas.Children.Add(curBall.GetEllipse());
-            //    Canvas.SetTop(curBall.GetEllipse(), curBall.Y);
-            //    Canvas.SetLeft(curBall.GetEllipse(), curBall.X);
-            //}
-
-            ////paddle init
-            //paddle = new Paddle(0, (int)wpfCanvas.Height - 50, 100, 30);
-            //wpfCanvas.Children.Add(paddle.GetRectangle());
-            //Canvas.SetTop(paddle.GetRectangle(), paddle.Y);
-            //Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
-
-            //// brick init
-            //bricks.Add(new Brick(75, 50, 80, 30));
-            //bricks.Add(new Brick(150, 350, 80, 30));
-            //bricks.Add(new Brick(550, 50, 80, 30));
-            //bricks.Add(new Brick(350, 90, 80, 30));
-            //bricks.Add(new Brick(650, 150, 80, 30));
-            //bricks.Add(new Brick(500, 170, 10, 10));
-            //bricks.Add(new Brick(470, 450, 80, 30));
-            //foreach (Brick curBrick in bricks)
-            //{
-            //    wpfCanvas.Children.Add(curBrick.GetRectangle());
-            //    Canvas.SetTop(curBrick.GetRectangle(), curBrick.Y);
-            //    Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);
-            //}
-
             // load level
             level = 1;
             maxLevels = 3;
@@ -205,6 +174,7 @@ namespace Brick_Breaker
             ////////////////
             // ball logic //
             ////////////////
+            List<Ball> removeBalls = new List<Ball>();
             foreach (Ball ball in balls)
             {
                 ball.UpdatePosition(defaultSpeed, incrementSpeed, level);
@@ -214,10 +184,26 @@ namespace Brick_Breaker
                 Canvas.SetLeft(ball.GetEllipse(), ball.X);
 
                 // edge canvas ball bounce
-                if (ball.Y <= 0) { ball.Dy *= -1; WallHit(); } // top
-                if (ball.Y + ball.Diameter >= wpfCanvas.Height) { ball.Dy *= -1; WallHit(); } // bottom
-                if (ball.X + ball.Diameter >= wpfCanvas.Width) { ball.Dx *= -1; WallHit(); } // right
-                if (ball.X <= 0) { ball.Dx *= -1; WallHit(); } // right
+                if (ball.Y <= 0) // top
+                {
+                    ball.Dy *= -1;
+                    WallHit();
+                }
+                if (ball.Y + ball.Diameter >= wpfCanvas.Height) // bottom
+                {
+                    ball.Dy *= -1; WallHit();
+                    removeBalls.Add(ball);
+                }
+                if (ball.X + ball.Diameter >= wpfCanvas.Width) // right
+                {
+                    ball.Dx *= -1;
+                    WallHit();
+                }
+                if (ball.X <= 0) // left
+                {
+                    ball.Dx *= -1;
+                    WallHit();
+                }
 
                 // paddle collision
                 if (paddle.X <= ball.X + ball.GetRadius() && ball.X + ball.GetRadius() <= paddle.X + paddle.Width) // ball in paddle X range?
@@ -311,6 +297,14 @@ namespace Brick_Breaker
                 removeBricks.Clear();
             }//end of ball forloop
 
+            // remove balls
+            foreach (Ball ball in removeBalls)
+            {
+                wpfCanvas.Children.Remove(ball.GetEllipse());
+                balls.Remove(ball);
+            }
+            removeBalls.Clear();
+
             //////////////////
             // bullet logic //
             //////////////////
@@ -383,21 +377,33 @@ namespace Brick_Breaker
                 Canvas.SetLeft(powerUp.GetRectangle(), powerUp.X);
 
                 // paddle collision
-                if (powerUp.Y + powerUp.Height + 1 >= paddle.Y)
+                if (paddle.Y <= powerUp.Y + powerUp.Height && powerUp.Y <= paddle.Y + paddle.Height) // Y range
                 {
-                    // power up on paddle
-                    if (paddle.X <= powerUp.X + powerUp.Width && powerUp.X - powerUp.Width <= paddle.X + paddle.Width)
+                    if (paddle.X <= powerUp.X + powerUp.Width && powerUp.X <= paddle.X + paddle.Width) // X range
                     {
                         // power up hit paddle
 
                         // TODO: paddle hit power up so add power up to game
-                    }
+                        Console.Write("hit paddle");
+                        if (powerUp.Type == "extra_ball")
+                        {
+                            Ball newBall = new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 0.70710678, -0.70710678);
+                            wpfCanvas.Children.Add(newBall.GetEllipse());
+                            Canvas.SetTop(newBall.GetEllipse(), newBall.Y);
+                            Canvas.SetLeft(newBall.GetEllipse(), newBall.X);
+                            balls.Add(newBall);
+                        }
 
-                    // remove power up
-                    removePowerUps.Add(powerUp);
+                        // remove power up
+                        removePowerUps.Add(powerUp);
+                    }
                 }
+
+                // canvas collision
+                if (powerUp.Y + powerUp.Height >= wpfCanvas.Height) removePowerUps.Add(powerUp);
             }
 
+            // remove power up
             foreach (PowerUp powerUp in removePowerUps)
             {
                 wpfCanvas.Children.Remove(powerUp.GetRectangle());
@@ -612,7 +618,7 @@ namespace Brick_Breaker
             // power up drop
             if (brick.PowerUp != "none")
             {
-                PowerUp newPowerUp = new PowerUp(brick.X + (brick.Width / 2) - 7.5, brick.Y, 3, brick.PowerUp);
+                PowerUp newPowerUp = new PowerUp(brick.X + (brick.Width / 2) - 7.5, brick.Y, 1, brick.PowerUp);
                 powerUps.Add(newPowerUp);
                 wpfCanvas.Children.Add(newPowerUp.GetRectangle());
                 Canvas.SetTop(newPowerUp.GetRectangle(), newPowerUp.Y);

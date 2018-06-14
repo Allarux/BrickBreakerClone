@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 
@@ -23,9 +24,11 @@ namespace Brick_Breaker
             this.type = type;
 
             rectangle = new Rectangle();
-            rectangle.Width = 15;
-            rectangle.Height = 30;
-            rectangle.Fill = new SolidColorBrush(Colors.Red);
+            rectangle.Width = 20;
+            rectangle.Height = 20;
+            ImageBrush brush = new ImageBrush();
+            brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/powerUp.png"));
+            rectangle.Fill = brush;
         }
 
         public Rectangle GetRectangle()
@@ -56,6 +59,11 @@ namespace Brick_Breaker
         public double Height
         {
             get { return rectangle.Height; }
+        }
+
+        public string Type
+        {
+            get { return type; }
         }
     }
 }
