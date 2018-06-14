@@ -370,16 +370,20 @@ namespace Brick_Breaker
             if (CompleteGame())
             {
                 labelWinner.Visibility = Visibility.Visible;
+                GameWinSound();
             }
             else if (EndGame()) // player loses game
             {
                 labelGameOver.Visibility = Visibility.Visible;
+                GameOverSound();
             }
             else if (EndLevel()) // advance to next level
             {
                 LoadLevel(++level);
                 labelLevel.Content = "Level: " + level;
                 labelLevel.Visibility = Visibility.Visible;
+                NextLevelSound();
+
             }
         }
 
@@ -437,7 +441,7 @@ namespace Brick_Breaker
             UpdateScore(1);
             brick.Remove = true;
             string fileName = "brickHit.wav";
-            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            string path = System.IO.Path.Combine("Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
@@ -445,7 +449,7 @@ namespace Brick_Breaker
         {
             // play sound
             string fileName = "ping_pong_8bit_beeep.wav";
-            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            string path = System.IO.Path.Combine("Sounds/", fileName);
             (new SoundPlayer(path)).Play();
 
         }
@@ -453,7 +457,28 @@ namespace Brick_Breaker
         private void WallHit()
         {
             string fileName = "betterWallHit.wav";
-            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            string path = System.IO.Path.Combine("Sounds/", fileName);
+            (new SoundPlayer(path)).Play();
+        }
+
+        private void NextLevelSound()
+        {
+            string fileName = "nextLevel.wav";
+            string path = System.IO.Path.Combine("Sounds/", fileName);
+            (new SoundPlayer(path)).Play();
+        }
+
+        private void GameOverSound()
+        {
+            string fileName = "youLose.wav";
+            string path = System.IO.Path.Combine("Sounds/", fileName);
+            (new SoundPlayer(path)).Play();
+        }
+
+        private void GameWinSound()
+        {
+            string fileName = "win.wav";
+            string path = System.IO.Path.Combine("Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
