@@ -110,7 +110,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="sounds\ping_pong_8bit_beeep.wav" />
+    <Content Include="Sounds\betterWallHit.wav" />
+    <Content Include="Sounds\brickHit.wav" />
+    <Content Include="Sounds\nextLevel.wav" />
+    <Content Include="Sounds\ping_pong_8bit_beeep.wav" />
+    <Content Include="Sounds\win.wav" />
+    <Content Include="Sounds\youLose.wav" />
+    <Resource Include="Textures\paddle-1.png" />
+    <Resource Include="Textures\goldBrick.png" />
+    <Resource Include="Textures\purpleBrick.png" />
+    <Resource Include="Textures\blueBrick.png" />
+    <Resource Include="Textures\redBrick.png" />
+    <Resource Include="Textures\brickTexture.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

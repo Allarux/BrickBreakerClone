@@ -127,9 +127,9 @@ namespace Brick_Breaker
                 int x =  Int32.Parse(values[0]);
                 int y = Int32.Parse(values[1]);
                 string color = values[2];
-                string goody = values[3];
+                string goody = values[4];
 
-                bricks.Add(new Brick(x, y, width, height));
+                bricks.Add(new Brick(x, y, width, height, color));
             }
 
             // add bricks to canvas
@@ -138,6 +138,8 @@ namespace Brick_Breaker
                 wpfCanvas.Children.Add(curBrick.GetRectangle());
                 Canvas.SetTop(curBrick.GetRectangle(), curBrick.Y);
                 Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);
+
+               
             }
 
             // recreate and reset paddle
@@ -374,16 +376,20 @@ namespace Brick_Breaker
             if (CompleteGame())
             {
                 labelWinner.Visibility = Visibility.Visible;
+                GameWinSound();
             }
             else if (EndGame()) // player loses game
             {
                 labelGameOver.Visibility = Visibility.Visible;
+                GameOverSound();
             }
             else if (EndLevel()) // advance to next level
             {
                 LoadLevel(++level);
                 labelLevel.Content = "Level: " + level;
                 labelLevel.Visibility = Visibility.Visible;
+                NextLevelSound();
+
             }
         }
 
@@ -459,7 +465,7 @@ namespace Brick_Breaker
             UpdateScore(1);
             brick.Remove = true;
             string fileName = "brickHit.wav";
-            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            string path = System.IO.Path.Combine("Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
@@ -467,7 +473,7 @@ namespace Brick_Breaker
         {
             // play sound
             string fileName = "ping_pong_8bit_beeep.wav";
-            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            string path = System.IO.Path.Combine("Sounds/", fileName);
             (new SoundPlayer(path)).Play();
 
         }
@@ -475,7 +481,28 @@ namespace Brick_Breaker
         private void WallHit()
         {
             string fileName = "betterWallHit.wav";
-            string path = System.IO.Path.Combine(currentDirectory, @"sounds\", fileName);
+            string path = System.IO.Path.Combine("Sounds/", fileName);
+            (new SoundPlayer(path)).Play();
+        }
+
+        private void NextLevelSound()
+        {
+            string fileName = "nextLevel.wav";
+            string path = System.IO.Path.Combine("Sounds/", fileName);
+            (new SoundPlayer(path)).Play();
+        }
+
+        private void GameOverSound()
+        {
+            string fileName = "youLose.wav";
+            string path = System.IO.Path.Combine("Sounds/", fileName);
+            (new SoundPlayer(path)).Play();
+        }
+
+        private void GameWinSound()
+        {
+            string fileName = "win.wav";
+            string path = System.IO.Path.Combine("Sounds/", fileName);
             (new SoundPlayer(path)).Play();
         }
 
@@ -483,6 +510,13 @@ namespace Brick_Breaker
         {
             score += increment;
             labelScoreNum.Content = score;
+        }
+
+        private void AddBrickTexture()
+        {
+            ImageBrush brush = new ImageBrush();
+            brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/brickTexture.jpg"));
+            
         }
     }
 }

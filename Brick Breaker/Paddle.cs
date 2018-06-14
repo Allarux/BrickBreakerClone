@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Brick_Breaker
@@ -35,7 +36,9 @@ namespace Brick_Breaker
             rectangle = new Rectangle();
             rectangle.Width = width;
             rectangle.Height = height;
-            rectangle.Fill = Brushes.HotPink;
+            ImageBrush brush = new ImageBrush();
+            brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/paddle-1.png"));
+            rectangle.Fill = brush;
         }
 
         public Rectangle GetRectangle()
