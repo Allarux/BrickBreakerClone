@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Brick_Breaker
@@ -14,7 +15,7 @@ namespace Brick_Breaker
         private int x, y, width, height;
         private bool remove;
 
-        public Brick(int x, int y, int width, int height)
+        public Brick(int x, int y, int width, int height, string color)
         {
             // brick data
             this.x = x;
@@ -22,17 +23,16 @@ namespace Brick_Breaker
             this.width = width;
             this.height = height;
             this.remove = false;
-
             // brick shape
-            CreateRectangle();
+            CreateRectangle(color);
         }
 
-        private void CreateRectangle()
+        private void CreateRectangle(string color)
         {
             rectangle = new Rectangle();
             rectangle.Width = width;
             rectangle.Height = height;
-            rectangle.Fill = Brushes.Thistle;
+            SetBrickTexture(color);
         }
 
         public Rectangle GetRectangle()
@@ -66,6 +66,33 @@ namespace Brick_Breaker
         {
             get { return remove; }
             set { remove = value; }
+        }
+
+        public void SetBrickTexture(string brickColor) 
+        {
+            ImageBrush brush = new ImageBrush();
+
+            switch(brickColor)
+            {
+                case "red":
+                    brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/redBrick.png"));
+                    break;
+
+                case "blue":
+                    brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/blueBrick.png"));
+                    break;
+
+                case "purple":
+                    brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/purpleBrick.png"));
+                    break;
+
+                case "gold":
+                    brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/goldBrick.png"));
+                    break;
+            }
+
+            
+            this.rectangle.Fill = brush;
         }
     }
 }
