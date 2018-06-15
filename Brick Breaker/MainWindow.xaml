@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Brick_Breaker"
         mc:Ignorable="d"
         Title="Brick Breaker" Height="600" Width="963" KeyDown="wpfKeyDown" ResizeMode="NoResize">
-    <Grid>
+    <Grid Background="#FFD8D8D8">
         <Menu x:Name="menu" Height="20" VerticalAlignment="Top" Width="auto">
             <MenuItem Header="_File">
                 <MenuItem Header="_Start" Click="StartEvent" ToolTip="Start game"/>

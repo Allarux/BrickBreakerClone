@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**
+ * Developers: 
+ * Jason Allen and Marco Gallegos
+ * 
+ * Descriptions: Custome final project to make a Brick Breaker clone in C# with WPF.
+ *
+ * Instructions:
+ * Select start or pause from the File menu or by using the shortcut key `S` to start and 
+ * pause the game. In the case of the game being over or completed, start will start a new 
+ * game for you. The Settings can be selected from under the File menu to change difficulty 
+ * and enable the cheat. Bad inputs will result in the setting not being changed. Break all 
+ * the bricks to advance to the next level and try to get the high score. Try to acquire 
+ * the falling power ups from some destroyed bricks. Fire bullets with the space bar. Other 
+ * power ups are an extra ball and a wider paddle.
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,8 +60,8 @@ namespace Brick_Breaker
             InitializeComponent();
             
             // speed settings
-            defaultSpeed = 2.7;
-            incrementSpeed = 1.0;
+            defaultSpeed = 2.5;
+            incrementSpeed = 0.75;
 
             // load level
             level = 1;
@@ -136,7 +153,7 @@ namespace Brick_Breaker
             Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
 
             // recreate and resest ball
-            balls.Add(new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 0.70710678, -0.70710678));
+            balls.Add(new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), .6, -0.8));
             foreach (Ball ball in balls)
             {
                 wpfCanvas.Children.Add(ball.GetEllipse());
@@ -410,7 +427,7 @@ namespace Brick_Breaker
                         // power up hit paddle
                         if (powerUp.Type == "extra_ball")
                         {
-                            Ball newBall = new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 0.70710678, -0.70710678);
+                            Ball newBall = new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 0.6, -0.8);
                             wpfCanvas.Children.Add(newBall.GetEllipse());
                             Canvas.SetTop(newBall.GetEllipse(), newBall.Y);
                             Canvas.SetLeft(newBall.GetEllipse(), newBall.X);
