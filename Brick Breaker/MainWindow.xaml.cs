@@ -35,7 +35,7 @@ namespace Brick_Breaker
         private double defaultSpeed, incrementSpeed;
         private long highScore;
         private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
-        private int ammo = 999;
+        private int ammo = 10;
         private bool CHEAT = true; //for debuggin
 
         public MainWindow()
@@ -96,6 +96,12 @@ namespace Brick_Breaker
             }
             bullets.Clear();
 
+            // remove exisint power ups if any
+            foreach (PowerUp powerUp in powerUps)
+            {
+                wpfCanvas.Children.Remove(powerUp.GetRectangle());
+            }
+            powerUps.Clear();
 
             // open file and get default width and height
             string[] lines = File.ReadAllLines("../../level" + level + ".csv");
@@ -119,9 +125,7 @@ namespace Brick_Breaker
             {
                 wpfCanvas.Children.Add(curBrick.GetRectangle());
                 Canvas.SetTop(curBrick.GetRectangle(), curBrick.Y);
-                Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);
-
-               
+                Canvas.SetLeft(curBrick.GetRectangle(), curBrick.X);              
             }
 
             // recreate and reset paddle
@@ -140,9 +144,28 @@ namespace Brick_Breaker
                 Canvas.SetLeft(ball.GetEllipse(), ball.X);
             }
 
-            //update ammo counter
+            // remove ammo
+            ammo = 0;
             this.labelAmmoCounter.Content = ammo.ToString();
+        }
 
+        private void ResetGame()
+        {
+            // restart game
+            level = 1;
+            LoadLevel(level);
+            score = 0;
+            UpdateScore();
+            ammo = 0;
+            labelAmmoCounter.Content = ammo.ToString();
+
+            // remove lose or win message
+            labelWinner.Visibility = Visibility.Hidden;
+            labelGameOver.Visibility = Visibility.Hidden;
+
+            // load starting level
+            level = 1;
+            LoadLevel(level);
         }
 
         private void gameTick(object sender, EventArgs e)
@@ -204,6 +227,9 @@ namespace Brick_Breaker
                     ball.Dx *= -1;
                     WallHit();
                 }
+
+                // ball too low to be recovered
+                if (ball.getCenter().Y >= paddle.Y) removeBalls.Add(ball);
 
                 // paddle collision
                 if (paddle.X <= ball.X + ball.GetRadius() && ball.X + ball.GetRadius() <= paddle.X + paddle.Width) // ball in paddle X range?
@@ -393,6 +419,23 @@ namespace Brick_Breaker
                             Canvas.SetLeft(newBall.GetEllipse(), newBall.X);
                             balls.Add(newBall);
                         }
+                        else if (powerUp.Type == "wide_paddle")
+                        {
+                            // remove paddle
+                            wpfCanvas.Children.Remove(paddle.GetRectangle());
+
+                            // create paddle
+                            int addWidth = 40;
+                            paddle = new Paddle(paddle.X - (addWidth / 2), paddle.Y, paddle.Width + addWidth, paddle.Height);
+                            wpfCanvas.Children.Add(paddle.GetRectangle());
+                            Canvas.SetTop(paddle.GetRectangle(), paddle.Y);
+                            Canvas.SetLeft(paddle.GetRectangle(), paddle.X);
+                        }
+                        else if (powerUp.Type == "bullets")
+                        {
+                            ammo += 5;
+                            labelAmmoCounter.Content = ammo.ToString();
+                        }
 
                         // remove power up
                         removePowerUps.Add(powerUp);
@@ -414,7 +457,6 @@ namespace Brick_Breaker
             // Game Over: balls too far back to hit end game
             if (EndGame() || EndLevel()) 
             {
-                //    labelGameOver.Visibility = Visibility.Visible;
                 PauseEvent(sender, null);
             }
             
@@ -445,7 +487,7 @@ namespace Brick_Breaker
             // check if a ball is above paddle
             foreach (Ball ball in balls)
             {
-                if (ball.Y + ball.GetRadius() <= paddle.Y) return false;
+                if (ball.getCenter().Y <= paddle.Y) return false;
             }
 
             // no balls above paddle
@@ -468,22 +510,18 @@ namespace Brick_Breaker
             if (EndGame() || CompleteGame())
             {
                 // restart game
-                level = 1;
-                LoadLevel(level);
-                score = 0;
-                UpdateScore();
+                ResetGame();
+                //level = 1;
+                //LoadLevel(level);
+                //score = 0;
+                //UpdateScore();
 
-                // remove lose or win message
-                labelWinner.Visibility = Visibility.Hidden;
-                labelGameOver.Visibility = Visibility.Hidden;
+                //// remove lose or win message
+                //labelWinner.Visibility = Visibility.Hidden;
+                //labelGameOver.Visibility = Visibility.Hidden;
             }
 
             labelLevel.Visibility = Visibility.Hidden;
-
-            //else if (EndLevel()) // advance to next leve
-            //{
-            //    LoadLevel(++level);
-            //}
 
             gameTimer.IsEnabled = true;
         }
@@ -499,19 +537,18 @@ namespace Brick_Breaker
                 labelWinner.Visibility = Visibility.Visible;
                 GameWinSound();
             }
-            //else if (EndGame()) // player loses game
-            //{
-            //    this.labelAmmoCounter.Content = "0";
-            //    labelGameOver.Visibility = Visibility.Visible;
-            //    GameOverSound();
-            //}
+            else if (EndGame()) // player loses game
+            {
+                this.labelAmmoCounter.Content = "0";
+                labelGameOver.Visibility = Visibility.Visible;
+                GameOverSound();
+            }
             else if (EndLevel()) // advance to next level
             {
                 LoadLevel(++level);
                 labelLevel.Content = "Level: " + level;
                 labelLevel.Visibility = Visibility.Visible;
                 NextLevelSound();
-
             }
         }
 
@@ -530,23 +567,28 @@ namespace Brick_Breaker
                 double tempDefaultSpeed = Double.Parse(settingsWindow.textBoxDefaultSpeed.Text);
                 double tempIncrementSpeed = Double.Parse(settingsWindow.textBoxSpeedIncrement.Text);
 
+                if (tempDefaultSpeed < 0 || 100 < tempDefaultSpeed) throw new Exception();
+                if (tempIncrementSpeed < 0 || 100 < tempIncrementSpeed) throw new Exception();
+
                 defaultSpeed = tempDefaultSpeed;
                 incrementSpeed = tempIncrementSpeed;
             }
             catch (Exception)
             {
-                MessageBoxResult result = MessageBox.Show("New setting contained invalid data. New settings are not applied.", "Bad settings", MessageBoxButton.OK);
+                MessageBoxResult result = MessageBox.Show("New setting contained invalid data. New settings are not applied. " +
+                    "Please make sure inputs are numbers greator than 0 and less than 100.", "Bad settings", MessageBoxButton.OK);
             }
-            
 
             // reset game
-            level = 1;
-            LoadLevel(level);
+            ResetGame();
         }
 
         private void HelpEvent(object sender, RoutedEventArgs e)
         {
+            PauseEvent(sender, e);
 
+            AboutWindow aboutWindow = new AboutWindow();
+            aboutWindow.ShowDialog();
         }
 
         private void ExitEvent(object sender, RoutedEventArgs e)

@@ -5,11 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Brick_Breaker"
         mc:Ignorable="d"
-        Title="SettingsWindow" Height="220" Width="328">
+        Title="Settings Window" Height="220" Width="328" ResizeMode="NoResize">
     <Grid>
-
-
-        
         <Label Content="Default starting speed:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="textBoxDefaultSpeed" HorizontalAlignment="Left" Height="23" Margin="145,14,0,0" TextWrapping="Wrap" Text="#.##" VerticalAlignment="Top" Width="120"/>
 
@@ -22,7 +19,5 @@
         <Label Content="Unlimited rockets:" HorizontalAlignment="Left" Margin="10,115,0,0" VerticalAlignment="Top"/>
         <CheckBox Content="" HorizontalAlignment="Left" Margin="116,122,0,0" VerticalAlignment="Top"/>
         <Button Content="OK" HorizontalAlignment="Left" Margin="126,149,0,0" VerticalAlignment="Top" Width="75" Click="CloseEvent"/>
-
-
     </Grid>
 </Window>

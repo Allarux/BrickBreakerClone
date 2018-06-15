@@ -26,9 +26,7 @@ namespace Brick_Breaker
             rectangle = new Rectangle();
             rectangle.Width = 20;
             rectangle.Height = 20;
-            ImageBrush brush = new ImageBrush();
-            brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/powerUp.png"));
-            rectangle.Fill = brush;
+            SetPowerUpTexture(type);
         }
 
         public Rectangle GetRectangle()
@@ -64,6 +62,25 @@ namespace Brick_Breaker
         public string Type
         {
             get { return type; }
+        }
+
+        private void SetPowerUpTexture(string type)
+        {
+            ImageBrush brush = new ImageBrush();
+            if (type == "bullets")
+            {
+                brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/tileRed.png"));
+            }
+            else if (type == "wide_paddle")
+            {
+                brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/tileBlue.png"));
+            }
+            else if (type == "extra_ball")
+            {
+                brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/tileGreen.png"));
+            }
+
+            rectangle.Fill = brush;
         }
     }
 }
