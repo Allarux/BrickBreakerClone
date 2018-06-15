@@ -30,10 +30,10 @@ namespace Brick_Breaker
         private List<PowerUp> powerUps = new List<PowerUp>();
         private List<Bullet> bullets = new List<Bullet>();
         private Paddle paddle;
-        private long score;
+        private int score;
         private int level, maxLevels;
         private double defaultSpeed, incrementSpeed;
-        private long highScore;
+        private int highScore;
         private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
         private int ammo = 0;
         private bool CHEAT = false; //for debuggin
@@ -408,9 +408,6 @@ namespace Brick_Breaker
                     if (paddle.X <= powerUp.X + powerUp.Width && powerUp.X <= paddle.X + paddle.Width) // X range
                     {
                         // power up hit paddle
-
-                        // TODO: paddle hit power up so add power up to game
-                        Console.Write("hit paddle");
                         if (powerUp.Type == "extra_ball")
                         {
                             Ball newBall = new Ball(40, wpfCanvas.Width / 2, 3 * (wpfCanvas.Height / 4), 0.70710678, -0.70710678);
@@ -511,14 +508,6 @@ namespace Brick_Breaker
             {
                 // restart game
                 ResetGame();
-                //level = 1;
-                //LoadLevel(level);
-                //score = 0;
-                //UpdateScore();
-
-                //// remove lose or win message
-                //labelWinner.Visibility = Visibility.Hidden;
-                //labelGameOver.Visibility = Visibility.Hidden;
             }
 
             labelLevel.Visibility = Visibility.Hidden;
@@ -536,12 +525,14 @@ namespace Brick_Breaker
                 this.labelAmmoCounter.Content = "0";
                 labelWinner.Visibility = Visibility.Visible;
                 GameWinSound();
+                UpdateHighScores(score);
             }
             else if (EndGame()) // player loses game
             {
                 this.labelAmmoCounter.Content = "0";
                 labelGameOver.Visibility = Visibility.Visible;
                 GameOverSound();
+                UpdateHighScores(score);
             }
             else if (EndLevel()) // advance to next level
             {
@@ -549,6 +540,26 @@ namespace Brick_Breaker
                 labelLevel.Content = "Level: " + level;
                 labelLevel.Visibility = Visibility.Visible;
                 NextLevelSound();
+            }
+        }
+
+        private void UpdateHighScores(int score)
+        {
+            int high = Int32.Parse(labelTopHighScore.Content.ToString());
+            int mid = Int32.Parse(labelMidHighScore.Content.ToString());
+            int low = Int32.Parse(labelLowHighScore.Content.ToString());
+
+            if (score > high)
+            {
+                labelLowHighScore.Content = labelMidHighScore.Content;
+                labelMidHighScore.Content = labelTopHighScore.Content;
+                labelTopHighScore.Content = score;
+            } else if (score > mid) {
+                labelLowHighScore.Content = labelMidHighScore.Content;
+                labelMidHighScore.Content = score;
+            } else if (score > low)
+            {
+                labelLowHighScore.Content = score;
             }
         }
 

@@ -13,8 +13,8 @@
         <Label Content="Increase speed per level:" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="textBoxSpeedIncrement" HorizontalAlignment="Left" Height="24" Margin="154,49,0,0" TextWrapping="Wrap" Text="#.##" VerticalAlignment="Top" Width="120"/>
         
-        <Label Content="Number of hit to destroy brick:" HorizontalAlignment="Left" Margin="10,80,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="24" Margin="188,84,0,0" TextWrapping="Wrap" Text="#" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Number of hit to destroy brick:" HorizontalAlignment="Left" Margin="10,80,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
+        <TextBox HorizontalAlignment="Left" Height="24" Margin="188,84,0,0" TextWrapping="Wrap" Text="#" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
         
         <Label Content="Unlimited bullets:" HorizontalAlignment="Left" Margin="10,115,0,0" VerticalAlignment="Top"/>
         <CheckBox Name="cheatCheckBox" Content="" HorizontalAlignment="Left" Margin="116,122,0,0" VerticalAlignment="Top"/>

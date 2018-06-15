@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Brick_Breaker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="921.228" KeyDown="wpfKeyDown">
+        Title="Brick Breaker" Height="600" Width="963" KeyDown="wpfKeyDown" ResizeMode="NoResize">
     <Grid>
         <Menu x:Name="menu" Height="20" VerticalAlignment="Top" Width="auto">
             <MenuItem Header="_File">
@@ -19,15 +19,22 @@
             </MenuItem>
         </Menu>
 
-        <Canvas x:Name="wpfCanvas" HorizontalAlignment="Left" Height="521" Margin="10,30,0,0" VerticalAlignment="Top" Width="772" Background="Gray">
+        <Canvas x:Name="wpfCanvas" HorizontalAlignment="Left" Height="520" Margin="10,30,0,0" VerticalAlignment="Top" Width="800">
+            <Canvas.Background>
+                <ImageBrush ImageSource="Textures/background.png"/>
+            </Canvas.Background>
             <Label x:Name="labelWinner" Content="Winner!" Canvas.Left="294" Canvas.Top="128" FontSize="48" FontWeight="Bold" Foreground="White" Visibility="Hidden"/>
             <Label x:Name="labelGameOver" Content="Game Over" Canvas.Left="260" Canvas.Top="128" FontSize="48" FontWeight="Bold" Foreground="#FFEC0000" Visibility="Hidden"/>
             <Label x:Name="labelLevel" Content="Level: #" Canvas.Left="300" Canvas.Top="128" Foreground="White" FontSize="48" FontWeight="Bold" Visibility="Hidden"/>
         </Canvas>
-        <Label x:Name="label" Content="Score:" HorizontalAlignment="Left" Margin="787,30,0,0" VerticalAlignment="Top" FontSize="24" Width="116" HorizontalContentAlignment="Center"/>
-        <Label x:Name="labelScoreNum" Content="0" HorizontalAlignment="Left" Margin="787,77,0,0" VerticalAlignment="Top" FontSize="24" Width="116" HorizontalContentAlignment="Center"/>
+        <Label x:Name="label" Content="Score:" HorizontalAlignment="Left" Margin="815,30,0,0" VerticalAlignment="Top" FontSize="24" Width="116" HorizontalContentAlignment="Center"/>
+        <Label x:Name="labelScoreNum" Content="0" HorizontalAlignment="Left" Margin="815,77,0,0" VerticalAlignment="Top" FontSize="24" Width="116" HorizontalContentAlignment="Center"/>
 
-        <Label x:Name="labelAmmo" Content="Ammo" HorizontalAlignment="Left" Margin="787,184,0,0" VerticalAlignment="Top" Height="50" Width="116" FontSize="24" HorizontalContentAlignment="Center"/>
-        <Label x:Name="labelAmmoCounter" Content="0" HorizontalAlignment="Left" Margin="787,234,0,0" VerticalAlignment="Top" Height="50" Width="116" FontSize="24" RenderTransformOrigin="0.685,0.6" HorizontalContentAlignment="Center"/>
+        <Label x:Name="labelAmmo" Content="Ammo:" HorizontalAlignment="Left" Margin="815,138,0,0" VerticalAlignment="Top" Height="50" Width="116" FontSize="24" HorizontalContentAlignment="Center"/>
+        <Label x:Name="labelAmmoCounter" Content="0" HorizontalAlignment="Left" Margin="815,193,0,0" VerticalAlignment="Top" Height="50" Width="116" FontSize="24" HorizontalContentAlignment="Center"/>
+        <Label x:Name="label1" Content="High Scores:" HorizontalAlignment="Left" Margin="815,259,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Label x:Name="labelTopHighScore" Content="0" HorizontalAlignment="Left" Margin="816,301,0,0" VerticalAlignment="Top" Width="118" FontSize="24" HorizontalContentAlignment="Center"/>
+        <Label x:Name="labelMidHighScore" Content="0" HorizontalAlignment="Left" Margin="816,348,0,0" VerticalAlignment="Top" Width="118" FontSize="24" HorizontalContentAlignment="Center"/>
+        <Label x:Name="labelLowHighScore" Content="0" HorizontalAlignment="Left" Margin="816,395,0,0" VerticalAlignment="Top" Width="118" FontSize="24" HorizontalContentAlignment="Center"/>
     </Grid>
 </Window>
