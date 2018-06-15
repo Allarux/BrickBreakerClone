@@ -35,13 +35,13 @@ namespace Brick_Breaker
         private double defaultSpeed, incrementSpeed;
         private long highScore;
         private readonly string currentDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
-        private int ammo = 10;
-        private bool CHEAT = true; //for debuggin
+        private int ammo = 0;
+        private bool CHEAT = false; //for debuggin
 
         public MainWindow()
         {
             InitializeComponent();
-
+            
             // speed settings
             defaultSpeed = 2.7;
             incrementSpeed = 1.0;
@@ -145,8 +145,8 @@ namespace Brick_Breaker
             }
 
             // remove ammo
-            ammo = 0;
-            this.labelAmmoCounter.Content = ammo.ToString();
+            //ammo = 0;
+            //this.labelAmmoCounter.Content = ammo.ToString();
         }
 
         private void ResetGame()
@@ -156,7 +156,7 @@ namespace Brick_Breaker
             LoadLevel(level);
             score = 0;
             UpdateScore();
-            ammo = 0;
+            ammo = (CHEAT) ? ammo = 999 : ammo = 0;
             labelAmmoCounter.Content = ammo.ToString();
 
             // remove lose or win message
@@ -578,6 +578,8 @@ namespace Brick_Breaker
                 MessageBoxResult result = MessageBox.Show("New setting contained invalid data. New settings are not applied. " +
                     "Please make sure inputs are numbers greator than 0 and less than 100.", "Bad settings", MessageBoxButton.OK);
             }
+
+            CHEAT = (bool)settingsWindow.cheatCheckBox.IsChecked;
 
             // reset game
             ResetGame();
