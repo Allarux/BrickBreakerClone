@@ -96,6 +96,9 @@ namespace Brick_Breaker
                 case "gold":
                     brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/goldBrick.png"));
                     break;
+                case "green":
+                    brush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Textures/greenBrick.png"));
+                    break;
             }
 
             

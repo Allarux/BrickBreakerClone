@@ -23,9 +23,9 @@
             <Canvas.Background>
                 <ImageBrush ImageSource="Textures/background.png"/>
             </Canvas.Background>
-            <Label x:Name="labelWinner" Content="Winner!" Canvas.Left="294" Canvas.Top="128" FontSize="48" FontWeight="Bold" Foreground="White" Visibility="Hidden"/>
-            <Label x:Name="labelGameOver" Content="Game Over" Canvas.Left="260" Canvas.Top="128" FontSize="48" FontWeight="Bold" Foreground="#FFEC0000" Visibility="Hidden"/>
-            <Label x:Name="labelLevel" Content="Level: #" Canvas.Left="300" Canvas.Top="128" Foreground="White" FontSize="48" FontWeight="Bold" Visibility="Hidden"/>
+            <Label x:Name="labelWinner" Content="Winner!" Canvas.Left="294" Canvas.Top="300" FontSize="48" FontWeight="Bold" Foreground="White" Visibility="Hidden"/>
+            <Label x:Name="labelGameOver" Content="Game Over" Canvas.Left="260" Canvas.Top="300" FontSize="48" FontWeight="Bold" Foreground="#FFEC0000" Visibility="Hidden"/>
+            <Label x:Name="labelLevel" Content="Level: #" Canvas.Left="300" Canvas.Top="300" Foreground="White" FontSize="48" FontWeight="Bold" Visibility="Hidden"/>
         </Canvas>
         <Label x:Name="label" Content="Score:" HorizontalAlignment="Left" Margin="815,30,0,0" VerticalAlignment="Top" FontSize="24" Width="116" HorizontalContentAlignment="Center"/>
         <Label x:Name="labelScoreNum" Content="0" HorizontalAlignment="Left" Margin="815,77,0,0" VerticalAlignment="Top" FontSize="24" Width="116" HorizontalContentAlignment="Center"/>

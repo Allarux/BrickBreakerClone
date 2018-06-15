@@ -164,8 +164,8 @@ namespace Brick_Breaker
             labelGameOver.Visibility = Visibility.Hidden;
 
             // load starting level
-            level = 1;
-            LoadLevel(level);
+            //level = 1;
+            //LoadLevel(level);
         }
 
         private void gameTick(object sender, EventArgs e)
@@ -570,6 +570,7 @@ namespace Brick_Breaker
             SettingsWindow settingsWindow = new SettingsWindow();
             settingsWindow.textBoxDefaultSpeed.Text = defaultSpeed.ToString();
             settingsWindow.textBoxSpeedIncrement.Text = incrementSpeed.ToString();
+            settingsWindow.cheatCheckBox.IsChecked = CHEAT;
 
             settingsWindow.ShowDialog();
 
@@ -578,7 +579,7 @@ namespace Brick_Breaker
                 double tempDefaultSpeed = Double.Parse(settingsWindow.textBoxDefaultSpeed.Text);
                 double tempIncrementSpeed = Double.Parse(settingsWindow.textBoxSpeedIncrement.Text);
 
-                if (tempDefaultSpeed < 0 || 100 < tempDefaultSpeed) throw new Exception();
+                if (tempDefaultSpeed <= 0 || 100 < tempDefaultSpeed) throw new Exception();
                 if (tempIncrementSpeed < 0 || 100 < tempIncrementSpeed) throw new Exception();
 
                 defaultSpeed = tempDefaultSpeed;
@@ -653,9 +654,11 @@ namespace Brick_Breaker
                 //create bullets
                 if(ammo > 0) {
                     Point center = paddle.GetPaddleCenter;
-                    Bullet bullet = new Bullet(15, center.X, center.Y, 0.70710678, -2);
+                    Bullet bullet = new Bullet(15, center.X - 7.5, paddle.Y - 15, 0, -2);
                     bullets.Add(bullet);
                     wpfCanvas.Children.Add(bullet.GetEllipse());
+                    Canvas.SetTop(bullet.GetEllipse(), bullet.Y);
+                    Canvas.SetLeft(bullet.GetEllipse(), bullet.X);
                     ammo--;
                     this.labelAmmoCounter.Content = ammo.ToString();
                 }
